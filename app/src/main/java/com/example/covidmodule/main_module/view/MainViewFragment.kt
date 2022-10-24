@@ -1,11 +1,13 @@
 package com.example.covidmodule.main_module.view
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.covidmodule.BR
 import com.example.covidmodule.R
@@ -15,23 +17,27 @@ import com.example.covidmodule.databinding.FragmentMainBinding
 import com.example.covidmodule.main_module.view_model.MainViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-
+@AndroidEntryPoint
 class MainViewFragment : Fragment() {
 
-    private var _binding: FragmentMainBinding? = null
+    private lateinit var binding: FragmentMainBinding
 
-    val binding get() = _binding!!
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        binding = FragmentMainBinding.inflate(inflater, container, false).apply {
+            this.viewModel = viewModel
+            lifecycleOwner = viewLifecycleOwner
+        }
         return binding.root
     }
 
@@ -41,9 +47,13 @@ class MainViewFragment : Fragment() {
         setupViews()
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
     }
 
     private fun setupViews() {
