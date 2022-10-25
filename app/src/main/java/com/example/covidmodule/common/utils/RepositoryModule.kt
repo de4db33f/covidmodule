@@ -1,6 +1,6 @@
 package com.example.covidmodule.common.utils
 
-import com.example.covidmodule.main_module.model.MainRepository
+import com.example.covidmodule.main_module.model.CovidModuleRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,5 +12,5 @@ import javax.inject.Singleton
 class RepositoryModule {
     @Singleton
     @Provides
-    fun provideMainRepository(): MainRepository = MainRepository()
+    fun provideMainRepository(): CovidModuleRepository = CovidModuleRepository()
 }

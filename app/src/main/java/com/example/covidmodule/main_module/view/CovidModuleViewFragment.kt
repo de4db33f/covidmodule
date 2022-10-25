@@ -6,28 +6,25 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.example.covidmodule.BR
 import com.example.covidmodule.R
 import com.example.covidmodule.common.utils.CommonUtils
-import com.example.covidmodule.common.utils.MainViewState
+import com.example.covidmodule.common.utils.CovidModuleViewStates
 import com.example.covidmodule.databinding.FragmentMainBinding
-import com.example.covidmodule.main_module.view_model.MainViewModel
+import com.example.covidmodule.main_module.view_model.CovidModuleViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainViewFragment : Fragment() {
+class CovidModuleViewFragment : Fragment() {
 
     private lateinit var binding: FragmentMainBinding
 
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: CovidModuleViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,7 +43,7 @@ class MainViewFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[CovidModuleViewModel::class.java]
     }
 
     private fun setupViews() {
@@ -66,11 +63,11 @@ class MainViewFragment : Fragment() {
     private suspend fun showState() {
         viewModel.stateFlow.collect {
             when (it) {
-                is MainViewState.Failure -> {
+                is CovidModuleViewStates.Failure -> {
                     hideProgressBar()
                     Snackbar.make(binding.root, it.msg, Snackbar.LENGTH_LONG).show()
                 }
-                is MainViewState.Success -> {
+                is CovidModuleViewStates.Success -> {
                     hideProgressBar()
                     binding.confirmCases.text =
                         getString(R.string.confirmed_cases, it.result.data.confirmed.toString())
@@ -79,7 +76,7 @@ class MainViewFragment : Fragment() {
 
                     binding.date.text = CommonUtils.getDateFormatted(it.date)
                 }
-                is MainViewState.Loading ->{
+                is CovidModuleViewStates.Loading ->{
                     showProgressBar()
                 }
             }
@@ -112,6 +109,6 @@ class MainViewFragment : Fragment() {
     companion object {
         @JvmStatic
         fun newInstance() =
-            MainViewFragment()
+            CovidModuleViewFragment()
     }
 }
