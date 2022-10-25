@@ -23,7 +23,6 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-@AndroidEntryPoint
 class MainViewFragment : Fragment() {
 
     private lateinit var binding: FragmentMainBinding
@@ -34,16 +33,14 @@ class MainViewFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMainBinding.inflate(inflater, container, false).apply {
-            this.viewModel = viewModel
-            lifecycleOwner = viewLifecycleOwner
-        }
+       // return inflater.inflate(R.layout.fragment_main, container, false)
+           binding =  FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViewModel()
+        binding = FragmentMainBinding.bind(view)
         setupViews()
     }
 
@@ -52,17 +49,13 @@ class MainViewFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
     private fun setupViews() {
         binding.selectDateButton.setOnClickListener {
             val dpd = MaterialDatePicker.Builder.datePicker().build()
             dpd.addOnPositiveButtonClickListener {
                 lifecycleScope.launch {
                     //FIXME: Le tuve que sumar 1 día (en milisegundos) porque siempre obtenía el epoch del día anterior al que seleccionaba
-                    binding.viewModel?.getCovidDataFromDate(CommonUtils.getFullDate(it + 24 * 60 * 60 * 1000))
+                    viewModel.getCovidDataFromDate(CommonUtils.getFullDate(it + 24 * 60 * 60 * 1000))
                     showState()
                 }
             }
@@ -71,12 +64,14 @@ class MainViewFragment : Fragment() {
     }
 
     private suspend fun showState() {
-        binding.viewModel?.stateFlow?.collect {
+        viewModel.stateFlow.collect {
             when (it) {
                 is MainViewState.Failure -> {
+                    hideProgressBar()
                     Snackbar.make(binding.root, it.msg, Snackbar.LENGTH_LONG).show()
                 }
                 is MainViewState.Success -> {
+                    hideProgressBar()
                     binding.confirmCases.text =
                         getString(R.string.confirmed_cases, it.result.data.confirmed.toString())
                     binding.numDeaths.text =
@@ -84,21 +79,23 @@ class MainViewFragment : Fragment() {
 
                     binding.date.text = CommonUtils.getDateFormatted(it.date)
                 }
-                else -> {
-                    binding.confirmCases.text = getString(R.string.confirmed_cases, "0")
-                    binding.numDeaths.text = getString(R.string.death_cases, "0")
-
-                    binding.date.text = getString(R.string.fatal_error_date)
+                is MainViewState.Loading ->{
+                    showProgressBar()
                 }
             }
         }
     }
 
-    private fun setupViewModel() {
-        val vm: MainViewModel by viewModels()
-        binding.lifecycleOwner = this
-        binding.setVariable(BR.viewModel, vm)
+    private fun showProgressBar(){
+        binding.layout.visibility = View.GONE
+        binding.progressIndicator.visibility = View.VISIBLE
     }
+
+    private fun hideProgressBar(){
+        binding.layout.visibility = View.VISIBLE
+        binding.progressIndicator.visibility = View.GONE
+    }
+
 
     override fun onStart() {
         super.onStart()
@@ -107,7 +104,7 @@ class MainViewFragment : Fragment() {
             val cal = Calendar.getInstance()
             cal.add(Calendar.DATE, -1)
             val current = dateFormat.format(cal.time)
-            binding.viewModel?.getCovidDataFromDate(current)
+            viewModel.getCovidDataFromDate(current)
             showState()
         }
     }

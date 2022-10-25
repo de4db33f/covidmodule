@@ -17,30 +17,21 @@ class MainViewModel @Inject constructor(
         MutableStateFlow(MainViewState.Loading)
     val stateFlow: StateFlow<MainViewState> = dataStateFlow
 
-    private val loading = MutableLiveData<Boolean>()
-    fun isLoaded() = loading
 
     fun getCovidDataFromDate(date: String) {
-        showProgressBar()
+        dataStateFlow.value = MainViewState.Loading
         getCovidDataUseCase(date).onEach {
             dataStateFlow.value =
                 MainViewState.Success(it, date.split("-").reversed().joinToString("-"))
-            hideProgressBar()
+
         }.catch {
             if (it.toString().contains("UnknownHostException")) {
                 dataStateFlow.value = MainViewState.Failure(R.string.unknown_host_error)
             } else {
                 dataStateFlow.value = MainViewState.Failure(R.string.main_error)
             }
-            hideProgressBar()
         }.launchIn(viewModelScope)
     }
 
-    private fun hideProgressBar() {
-        loading.postValue(true)
-    }
 
-    private fun showProgressBar() {
-        loading.postValue(false)
-    }
 }
