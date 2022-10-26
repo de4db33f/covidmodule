@@ -30,8 +30,7 @@ class CovidModuleViewFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-       // return inflater.inflate(R.layout.fragment_main, container, false)
-           binding =  FragmentMainBinding.inflate(inflater, container, false)
+        binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -76,19 +75,19 @@ class CovidModuleViewFragment : Fragment() {
 
                     binding.date.text = CommonUtils.getDateFormatted(it.date)
                 }
-                is CovidModuleViewStates.Loading ->{
+                is CovidModuleViewStates.Loading -> {
                     showProgressBar()
                 }
             }
         }
     }
 
-    private fun showProgressBar(){
+    private fun showProgressBar() {
         binding.layout.visibility = View.GONE
         binding.progressIndicator.visibility = View.VISIBLE
     }
 
-    private fun hideProgressBar(){
+    private fun hideProgressBar() {
         binding.layout.visibility = View.VISIBLE
         binding.progressIndicator.visibility = View.GONE
     }

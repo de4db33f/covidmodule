@@ -33,5 +33,4 @@ class CovidModuleViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-
 }
