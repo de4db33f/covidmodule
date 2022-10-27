@@ -60,6 +60,19 @@ class CovidModuleViewModelTest {
     }
 
     @Test
+    fun `Success state works2`(){
+        val covidDataEntity = CovidDataEntity(data=CovidResultData(deaths = 10000, confirmed = 5000))
+        whenever(getCovidDataUseCase.invoke("2022-10-24")).thenReturn(
+            flowOf(covidDataEntity)
+        )
+        //verify(covidModuleViewModel.stateFlow).onChanged(refEq(State.Loading()))
+        Assert.assertEquals(CovidModuleViewStates.Loading, covidModuleViewModel.stateFlow.value)
+
+        covidModuleViewModel.getCovidDataFromDate("2022-10-24")
+        Assert.assertTrue( covidModuleViewModel.stateFlow.value is CovidModuleViewStates.Success)
+    }
+
+    @Test
     fun `Failure state works`(){
         val covidDataEntity = CovidDataEntity(data=CovidResultData(deaths = 10000, confirmed = 5000))
         whenever(getCovidDataUseCase.invoke("2022-10-24")).thenReturn(
