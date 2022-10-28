@@ -52,7 +52,6 @@ class CovidModuleViewFragment : Fragment() {
                 lifecycleScope.launch {
                     //FIXME: Le tuve que sumar 1 día (en milisegundos) porque siempre obtenía el epoch del día anterior al que seleccionaba
                     viewModel.getCovidDataFromDate(CommonUtils.getFullDate(it + 24 * 60 * 60 * 1000))
-                    showState()
                 }
             }
             dpd.show(parentFragmentManager, "DatePicker")
