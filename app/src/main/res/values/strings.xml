@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">CovidModule</string>
+    <string name="app_name">Carsales Test</string>
+    <string name="select_date_label">Seleccione una fecha</string>
+    <string name="main_error">No hay datos para la fecha elegida</string>
+    <string name="fatal_error_date">Sin datos</string>
+    <string name="unknown_host_error">No es posible conectarse al servidor, revise su conexión</string>
+    <string name="confirmed_cases">Casos confirmados: %s</string>
+    <string name="death_cases">Cantidad de muertes confirmadas: %s</string>
+    <string name="invalid_date">La fecha elegida no contiene datos</string>
+    <string name="dot1">Dot death number</string>
+    <string name="dot_confirm_cases">Dot confirm cases</string>
+    <string name="splash_screen_image_desc">Splash Screen image</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
