@@ -6,6 +6,8 @@ import com.example.covidmodule.common.utils.CovidModuleViewStates
 import com.example.covidmodule.main_module.usecases.GetCovidDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,6 +21,13 @@ class CovidModuleViewModel @Inject constructor(
 
 
     fun getCovidDataFromDate(date: String) {
+        val time = Calendar.getInstance().time
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val current = formatter.format(time)
+        if(date >= current){
+            dataStateFlow.value = CovidModuleViewStates.Failure(R.string.date_out_range_error)
+            return
+        }
         dataStateFlow.value = CovidModuleViewStates.Loading
         getCovidDataUseCase(date).onEach {
             dataStateFlow.value =
@@ -32,6 +41,5 @@ class CovidModuleViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
-
 
 }
