@@ -5,12 +5,10 @@ import java.util.*
 
 object CommonUtils {
 
-    fun getFullDate(epoch: Long): String = getFormattedTime(epoch)
-
-    private fun getFormattedTime(epoch: Long): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val netDate = Date(epoch)
-        return sdf.format(netDate)
+    fun getFormattedDate(year: Int, month: Int, day: Int): String {
+        val monthS: String = if(month<10) "0$month" else month.toString()
+        val dayS: String = if(day<10) "0$day" else day.toString()
+        return "$year-$monthS-$dayS"
     }
 
     fun getDateFormatted(date: String): String{
@@ -27,8 +25,7 @@ object CommonUtils {
         val cal = Calendar.getInstance()
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         cal.time = sdf.parse(date) as Date
-        return SimpleDateFormat("MMMM", Locale.getDefault()).format(cal.time)
-
+        return SimpleDateFormat("MMMM", Locale("es", "ES")).format(cal.time)
     }
 
 }

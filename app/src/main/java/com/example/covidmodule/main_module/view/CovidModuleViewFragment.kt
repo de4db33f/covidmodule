@@ -1,5 +1,6 @@
 package com.example.covidmodule.main_module.view
 
+import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -13,7 +14,6 @@ import com.example.covidmodule.common.utils.CommonUtils
 import com.example.covidmodule.common.utils.CovidModuleViewStates
 import com.example.covidmodule.databinding.FragmentMainBinding
 import com.example.covidmodule.main_module.view_model.CovidModuleViewModel
-import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.text.DateFormat
@@ -47,14 +47,18 @@ class CovidModuleViewFragment : Fragment() {
 
     private fun setupViews() {
         binding.selectDateButton.setOnClickListener {
-            val dpd = MaterialDatePicker.Builder.datePicker().build()
-            dpd.addOnPositiveButtonClickListener {
+            val c = Calendar.getInstance()
+            val year = c.get(Calendar.YEAR)
+            val month = c.get(Calendar.MONTH)
+            val day = c.get(Calendar.DAY_OF_MONTH)
+            val dpd = DatePickerDialog(requireActivity(), { view, currentYear, monthOfYear, dayOfMonth ->
                 lifecycleScope.launch {
-                    //FIXME: Le tuve que sumar 1 día (en milisegundos) porque siempre obtenía el epoch del día anterior al que seleccionaba
-                    viewModel.getCovidDataFromDate(CommonUtils.getFullDate(it + 24 * 60 * 60 * 1000))
+                    viewModel.getCovidDataFromDate(CommonUtils.getFormattedDate(currentYear, monthOfYear+1,dayOfMonth))
                 }
-            }
-            dpd.show(parentFragmentManager, "DatePicker")
+
+            }, year, month, day)
+
+            dpd.show()
         }
     }
 
